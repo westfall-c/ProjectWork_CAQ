@@ -12,3 +12,11 @@ ol{
 header,p{
   font-weight:bold;
 }
+
+.hidden {
+  display: none;
+}
+.visible {
+  display: block;
+}
+
