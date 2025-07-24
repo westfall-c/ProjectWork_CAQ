@@ -4,6 +4,11 @@ export function Articles(params) {
   const query = params.query || {};
   const queryName = query.queryName || "na";
 
+  // ✅ Only include valid articles
+  const validArticles = articles.filter(
+    item => item && item.title && item.title !== "[Removed]"
+  );
+
   return (
     <div>
       {/* Query Detail Block */}
@@ -12,31 +17,26 @@ export function Articles(params) {
         <strong>Search Term (q):</strong> {query.q || "n/a"}<br />
         <strong>Language:</strong> {query.language || "n/a"}<br />
         <strong>Page Size:</strong> {query.pageSize || "n/a"}<br />
-        <strong>Total Results:</strong> {articleCount}
+        <strong>Total Results:</strong> {articleCount}<br />
+        <strong>Displayed:</strong> {validArticles.length}
       </div>
 
       {/* Scrollable Articles List */}
       <div className="article-scroll-container">
         <ol className="article-list">
-          {articles.map((item, idx) => {
-            if (!item) return <li key={idx}>No Item</li>;
-            if (!item.title) return <li key={idx}>No Title</li>;
-            if (item.title === "[Removed]") return <li key={idx}>Was Removed</li>;
-
-            return (
-              <li key={idx} className="article-item">
-                {item.title}{" "}
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="article-link"
-                >
-                  Link
-                </a>
-              </li>
-            );
-          })}
+          {validArticles.map((item, idx) => (
+            <li key={idx} className="article-item">
+              {item.title}{" "}
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noreferrer"
+                className="article-link"
+              >
+                Link
+              </a>
+            </li>
+          ))}
         </ol>
       </div>
     </div>
