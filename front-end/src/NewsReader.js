@@ -65,25 +65,39 @@ export function NewsReader() {
     setQuery(selectedQuery);
   }
 
-  async function onFormSubmit(queryObject) {
-    if (!queriesLoaded) {
-      alert("Queries are still loading, please wait.");
-      return;
-    }
-    let newSavedQueries = [queryObject];
-    for (let query of savedQueries) {
-      if (query.queryName !== queryObject.queryName) {
-        newSavedQueries.push(query);
-      }
-    }
-    try {
-      await saveQueryList(newSavedQueries);
-      setSavedQueries(newSavedQueries);
-      setQuery(queryObject);
-    } catch (err) {
-      console.error('Failed to save queries:', err);
+async function onFormSubmit(queryObject) {
+  if (currentUser === null) {
+    alert("Log in if you want to create new queries!");
+    return;
+  }
+
+  // ✅ Restrict guest to 3 saved queries
+  if (savedQueries.length >= 3 && currentUser.user === "guest") {
+    alert("Guest users cannot submit new queries once 3 have been saved.");
+    return;
+  }
+
+  if (!queriesLoaded) {
+    alert("Queries are still loading, please wait.");
+    return;
+  }
+
+  let newSavedQueries = [queryObject];
+  for (let query of savedQueries) {
+    if (query.queryName !== queryObject.queryName) {
+      newSavedQueries.push(query);
     }
   }
+
+  try {
+    await saveQueryList(newSavedQueries);
+    setSavedQueries(newSavedQueries);
+    setQuery(queryObject);
+  } catch (err) {
+    console.error('Failed to save queries:', err);
+  }
+}
+
 
   function resetSavedQueries() {
     const clearedList = [exampleQuery];
